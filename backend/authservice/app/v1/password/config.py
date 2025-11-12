@@ -1,0 +1,2 @@
+class HasherConfig:
+    SCHEMES = ["bcrypt"]
