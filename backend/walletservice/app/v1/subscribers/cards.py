@@ -203,7 +203,8 @@ async def wallet_to_card_payment_response(data: WalletToCardPaymentResponseEvent
                                               user_id=data.source_user_id,
                                               emitter=os.environ["SERVICE_NAME"],
                                               reason=data.failed_reason,
-                                              message=f"Payment error from wallet {data.source_wallet_id} to card {data.destination_card_id}.")
+                                              message=f"Payment error from wallet {data.source_wallet_id} "
+                                                      f"to card {data.destination_card_id}.")
 
                     outbox_event = OutBoxEvent(payload=event.model_dump_json(),
                                                event_id=event.event_id,

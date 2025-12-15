@@ -82,6 +82,7 @@ async def post_deposit_to_wallet(deposit: DepositIn, request: Request, session: 
                                 detail="db-deposit-exception")
 
 
+# noinspection PyUnresolvedReferences
 @private_api.post(PrivateRoutes.PAYMENT.value, status_code=status.HTTP_200_OK)
 async def post_wallet_payment(payment: PaymentRequestIn, request: Request, session: AsyncSession = Depends(get_async_session)):
     jwt: JWTPayload = request.state.jwt
@@ -129,7 +130,7 @@ async def post_wallet_payment(payment: PaymentRequestIn, request: Request, sessi
 
             except SQLAlchemyError:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                    detail="db-wallet-to-wallet-exception")
+                                    detail="db-wallet-to-card-exception")
 
             return {"response": "payment-sent-to-card"}
 
