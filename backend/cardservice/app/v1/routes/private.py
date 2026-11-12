@@ -216,6 +216,9 @@ async def post_card_payment(card_id: uuid.UUID,
             return {"detail": "payment-completed"}
 
         elif payload.transaction_type == CardTransactionType.CARD_TO_WALLET:
+            # Reserve the funds now: if the wallet service rejects the payment they are given back.
+            user_card.amount -= payload.amount
+
             event = CardToWalletPaymentEvent(event_id=uuid.uuid4(),
                                              source_card_id=user_card.id,
                                              source_user_id=user_card.user_id,

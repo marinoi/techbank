@@ -151,7 +151,7 @@ class Card(BaseExt):
                           counterparty_wallet_id: uuid.UUID,
                           amount: Decimal,
                           description: str | None) -> CardTransaction:
-        self.amount -= amount
+        # The balance was already debited when the payment was requested.
         return CardTransaction(card=self,
                                counterparty_instrument_id=counterparty_wallet_id,
                                counterparty_name=counterparty_user_name,

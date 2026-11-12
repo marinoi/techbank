@@ -112,6 +112,9 @@ async def post_wallet_payment(payment: PaymentRequestIn, request: Request, sessi
                                     detail="db-wallet-to-wallet-exception")
 
         elif payment.transaction_type == WalletTransactionType.WALLET_TO_CARD:
+            # Reserve the funds now: if the card service rejects the payment they are given back.
+            user_wallet.amount -= payment.amount
+
             try:
                 event = WalletToCardPaymentEvent(event_id=uuid.uuid4(),
                                                  source_wallet_id=user_wallet.id,

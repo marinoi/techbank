@@ -145,7 +145,7 @@ async def wallet_card_recharge(data: CardRechargeEvent):
         raise
 
 
-@rabbitmq.subscriber(queue=WalletQueues.CARD_TO_WALLET_PAYMENT.value)
+@rabbitmq.subscriber(queue=WalletQueues.CARD_TO_WALLET_PAYMENT.value, retry=3)
 @inbox_based_idempotency(queue=WalletQueues.CARD_TO_WALLET_PAYMENT.value.name)
 async def card_to_wallet_payment(data: CardToWalletPaymentEvent):
     try:
@@ -189,7 +189,7 @@ async def card_to_wallet_payment(data: CardToWalletPaymentEvent):
         raise
 
 
-@rabbitmq.subscriber(queue=WalletQueues.WALLET_TO_CARD_PAYMENT_RESPONSE.value)
+@rabbitmq.subscriber(queue=WalletQueues.WALLET_TO_CARD_PAYMENT_RESPONSE.value, retry=3)
 @inbox_based_idempotency(queue=WalletQueues.WALLET_TO_CARD_PAYMENT_RESPONSE.value.name)
 async def wallet_to_card_payment_response(data: WalletToCardPaymentResponseEvent):
     try:
@@ -198,6 +198,7 @@ async def wallet_to_card_payment_response(data: WalletToCardPaymentResponseEvent
                 wallet = await Wallet.get_by_id(session, data.source_wallet_id, load_user=True, for_update=True)
 
                 if data.failed:
+                    wallet.amount += data.amount  # give back the funds reserved by the payment request
                     event = NotificationEvent(event_id=uuid.uuid4(),
                                               source_event_id=data.event_id,
                                               user_id=data.source_user_id,
