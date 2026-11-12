@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Annotated
 
-from pydantic import BaseModel, UUID4, ConfigDict, condecimal
+from pydantic import BaseModel, UUID4, ConfigDict, Field
 
 from app.v1.common.schemas.dbentity import HasID, HasCreatedAt, HasUpdatedAt
 from app.v1.models.enums import WalletTransactionType, WalletTransactionDirection
@@ -33,11 +33,11 @@ class TransactionDetailsOut(TransactionOut):
 
 
 class DepositIn(BaseModel):
-    amount: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)]
+    amount: Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
 
 
 class PaymentRequestIn(BaseModel):
-    amount: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)]
+    amount: Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
     counterparty_instrument_id: UUID4
     transaction_type: WalletTransactionType
     description: str

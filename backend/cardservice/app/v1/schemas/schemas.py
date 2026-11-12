@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Annotated
 
-from pydantic import BaseModel, UUID4, ConfigDict, model_validator, condecimal
+from pydantic import BaseModel, UUID4, ConfigDict, model_validator, Field
 
 from ..common.schemas.dbentity import HasID, HasCreatedAt, HasUpdatedAt
 from ..models.enums import CardTransactionType, CardTransactionDirection, CardUsagePolicy
@@ -16,14 +16,13 @@ class CardOut(HasID):
 
 
 class NewCardIn(BaseModel):
-    amount: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)] = Decimal("0")
+    amount: Annotated[Decimal, Field(ge=0, max_digits=12, decimal_places=2)] = Decimal("0")
     policy: list[CardUsagePolicy] = [CardUsagePolicy.STANDARD]
-    amount_limit: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)] | None = None
+    amount_limit: Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)] | None = None
 
-    @classmethod
     @model_validator(mode="after")
+    @classmethod
     def check_policy_rules(cls, model: "NewCardIn") -> "NewCardIn":
-        print("Calling check policy_rules")
         if CardUsagePolicy.AMOUNT_LIMITED in model.policy:
             if model.amount_limit is None:
                 raise ValueError("amount-limit-is-empty")
@@ -33,7 +32,7 @@ class NewCardIn(BaseModel):
 
 
 class CardRechargeIn(BaseModel):
-    amount: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)]
+    amount: Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
 
 class TransactionOut(HasID, HasCreatedAt):
     amount: Decimal
@@ -54,7 +53,7 @@ class TransactionDetailsOut(TransactionOut):
 
 
 class PaymentRequestIn(BaseModel):
-    amount: Annotated[Decimal, condecimal(gt=0, max_digits=12, decimal_places=2)]
+    amount: Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
     counterparty_instrument_id: UUID4
     transaction_type: CardTransactionType
     description: str

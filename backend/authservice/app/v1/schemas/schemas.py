@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import Annotated
 
-from pydantic import BaseModel, EmailStr, constr, field_validator, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
 
 from ..common.schemas.dbentity import HasID, HasCreatedAt
 from ..common.security.roles import Role
@@ -12,7 +12,7 @@ class UserDataIn(BaseModel):
     name: str
     surname: str
     date_of_birth: date
-    password: Annotated[str, constr(min_length=8)]
+    password: Annotated[str, Field(min_length=8)]
     role: Role = Role.USER
 
     @field_validator("date_of_birth")
@@ -34,7 +34,7 @@ class AdminUserDataIn(BaseModel):
 
 class LoginDataIn(BaseModel):
     email: EmailStr
-    password: Annotated[str, constr(min_length=8)]
+    password: str
 
 
 class UserOut(BaseModel):
